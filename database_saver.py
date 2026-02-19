@@ -15,8 +15,10 @@ class DatabaseConfig:
 
 
 def save_database(folder_name: str = None, base_name: str = None) -> Path:
-    """creates the directory if it doesn't already exist
-    	and returns a unique file path to avoid overwriting"""
+    """
+    creates the directory if it doesn't already exist
+    and returns a unique file path to avoid overwriting
+    """
 
     folder = folder_name or DatabaseConfig.default_dir
     name = base_name or DatabaseConfig.default_name
