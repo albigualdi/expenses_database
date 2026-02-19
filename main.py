@@ -1,11 +1,11 @@
 import sqlite3
-import file_saver
+import database_saver
 import expenses_functions
 from expenses_functions import DatabaseManager
 
 # --- Initialization of the constants of the program ---
 
-DATABASE = file_saver.saveDatabase()   # Set the Database name and path
+DATABASE = database_saver.save_database()   # Set the Database name and path
 # DATABASE = 'spese_2026.db'
 
 
@@ -40,46 +40,46 @@ cursor = connection.cursor()            # Set the cursor to navigate the databas
 #--------------------------------------------------------------------------------------------
 
 # --- Create tables ---
-# expenses_functions.createTable(manager, cursor, 'movement')
-# expenses_functions.createTable(manager, cursor, 'debt_cred')
-# expenses_functions.expensesRecap(manager, cursor, 'month_recap')
-# expenses_functions.debtCredRecap(manager, cursor)
+# expenses_functions.create_table(manager, cursor, 'movement')
+# expenses_functions.create_table(manager, cursor, 'debt_cred')
+# expenses_functions.expenses_recap(manager, cursor, 'month_recap')
+# expenses_functions.debt_cred_recap(manager, cursor)
 
 # -- Add row ---
-# expenses_functions.addMovement(manager, cursor, '2026-07-15', 'Cena', 'San Valentino', 'Contanti', 10, 'uscita')
-# expenses_functions.addDebtCred(manager, cursor, '2026-01-01', 'Regali', 'Pranzo', 'Mamma', 10, 0, 'debito')
-# expenses_functions.addDebtCred(manager, cursor, '2026-02-01', 'Regali', 'Pranzo', 'Lori', 10, 5, 'credito')
-# expenses_functions.addDebtCred(manager, cursor, '2026-03-01', 'Regali', 'Pranzo', 'Lori', 10, 0, 'debito')
-# expenses_functions.addDebtCred(manager, cursor, '2026-03-01', 'Regali', 'Pranzo', 'Brigg', 10, 0, 'credito')
+# expenses_functions.add_movement(manager, cursor, '2026-07-15', 'Cena', 'San Valentino', 'Contanti', 10, 'uscita')
+# expenses_functions.add_debt_cred(manager, cursor, '2026-01-01', 'Regali', 'Pranzo', 'Mamma', 10, 0, 'debito')
+# expenses_functions.add_debt_cred(manager, cursor, '2026-02-01', 'Regali', 'Pranzo', 'Lori', 10, 5, 'credito')
+# expenses_functions.add_debt_cred(manager, cursor, '2026-03-01', 'Regali', 'Pranzo', 'Lori', 10, 0, 'debito')
+# expenses_functions.add_debt_cred(manager, cursor, '2026-03-01', 'Regali', 'Pranzo', 'Brigg', 10, 0, 'credito')
 
 # --- Modify tables ---
-# expenses_functions.modifyDeleteRow(cursor, 'modify', 'debt_cred', 1, 'amount', 100)
-# expenses_functions.modifyDeleteRow(cursor, 'modify', 'debt_cred', 1, tag='paid', value=30)
-# expenses_functions.modifyDeleteRow(cursor, 'delete', 'debt_cred', 9)
+# expenses_functions.modify_delete_row(cursor, 'modify', 'debt_cred', 1, 'amount', 100)
+# expenses_functions.modify_delete_row(cursor, 'modify', 'debt_cred', 1, tag='paid', value=30)
+# expenses_functions.modify_delete_row(cursor, 'delete', 'debt_cred', 9)
 
 # --- Read Tables ---
-# expenses_functions.readTable(cursor, 'debt_cred')
-# expenses_functions.readTable(cursor, 'movement')
-# expenses_functions.readTable(cursor, 'month_recap')
-# expenses_functions.readTable(cursor, 'debt_cred_recap')
+# expenses_functions.read_table(cursor, 'debt_cred')
+# expenses_functions.read_table(cursor, 'movement')
+# expenses_functions.read_table(cursor, 'month_recap')
+# expenses_functions.read_table(cursor, 'debt_cred_recap')
 
 # --- Delete Tables ---
-# expenses_functions.deleteTable(cursor, 'movement')
-# expenses_functions.deleteTable(cursor, 'debt_cred')
-# expenses_functions.deleteTable(cursor, 'expenses_recap')
-# expenses_functions.deleteTable(cursor, 'debt_cred_recap')
-# expenses_functions.deleteTable(cursor, 'january_recap')
-# expenses_functions.deleteTable(cursor, 'february_recap')
-# expenses_functions.deleteTable(cursor, 'march_recap')
-# expenses_functions.deleteTable(cursor, 'april_recap')
-# expenses_functions.deleteTable(cursor, 'may_recap')
-# expenses_functions.deleteTable(cursor, 'june_recap')
-# expenses_functions.deleteTable(cursor, 'july_recap')
-# expenses_functions.deleteTable(cursor, 'august_recap')
-# expenses_functions.deleteTable(cursor, 'september_recap')
-# expenses_functions.deleteTable(cursor, 'october_recap')
-# expenses_functions.deleteTable(cursor, 'november_recap')
-# expenses_functions.deleteTable(cursor, 'december_recap')
+# expenses_functions.delete_table(cursor, 'movement')
+# expenses_functions.delete_table(cursor, 'debt_cred')
+# expenses_functions.delete_table(cursor, 'expenses_recap')
+# expenses_functions.delete_table(cursor, 'debt_cred_recap')
+# expenses_functions.delete_table(cursor, 'january_recap')
+# expenses_functions.delete_table(cursor, 'february_recap')
+# expenses_functions.delete_table(cursor, 'march_recap')
+# expenses_functions.delete_table(cursor, 'april_recap')
+# expenses_functions.delete_table(cursor, 'may_recap')
+# expenses_functions.delete_table(cursor, 'june_recap')
+# expenses_functions.delete_table(cursor, 'july_recap')
+# expenses_functions.delete_table(cursor, 'august_recap')
+# expenses_functions.delete_table(cursor, 'september_recap')
+# expenses_functions.delete_table(cursor, 'october_recap')
+# expenses_functions.delete_table(cursor, 'november_recap')
+# expenses_functions.delete_table(cursor, 'december_recap')
 
 #--------------------------------------------------------------------------------------------
 

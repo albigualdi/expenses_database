@@ -6,7 +6,7 @@ class DatabaseConfig:
     default_name = 'untitled'
 
     @classmethod
-    def setDefaults(cls, folder: str = None, name: str = None):
+    def set_defaults(cls, folder: str = None, name: str = None):
         """Method to update the default values"""
         if folder:
             cls.default_dir = folder
@@ -14,7 +14,7 @@ class DatabaseConfig:
             cls.default_name = name
 
 
-def saveDatabase(folder_name : str = None, base_name : str = None) -> str:
+def save_database(folder_name : str = None, base_name : str = None) -> str:
     '''saveDatabase creates the directory (if doesn't exist)
     and returns a unique file path to avoid overwriting'''
 
@@ -36,6 +36,6 @@ def saveDatabase(folder_name : str = None, base_name : str = None) -> str:
     return file_path
 
 # --- Per vedere come funziona ---
-# print(saveDatabase())
-# DatabaseConfig.setDefaults(folder='Progetti/Database', name='backup_globale')
-# print(saveDatabase())
+# print(save_database())
+# DatabaseConfig.set_defaults(folder='Progetti/Database', name='backup_globale')
+# print(save_database())
