@@ -1,15 +1,17 @@
 import sqlite3
-import file_saver
+import database_saver
 import expenses_functions
 from expenses_functions import DatabaseManager
 
-# --- Initialization of the constants of the program ---
+# --- Initialization of the program's constants ---
 
-DATABASE = file_saver.saveDatabase()   # Set the Database name and path
+# Set the Database name and path
+DATABASE = database_saver.save_database()
 # DATABASE = 'spese_2026.db'
 
 
-METHODS_OF_PAYMENT = [          # This list may be modified
+# This list may be modified
+METHODS_OF_PAYMENT = [
     'Contanti',
     'Bonifico',
     'Bancomat',
@@ -18,7 +20,8 @@ METHODS_OF_PAYMENT = [          # This list may be modified
     'PayPal'
 ]
 
-CATEGORIES = [                  # This list may be modified
+# This list may be modified
+CATEGORIES = [
     'Cibo',
     'Svago',
     'Spesa',
@@ -32,10 +35,13 @@ CATEGORIES = [                  # This list may be modified
     'Generico'
 ]
 
-manager = DatabaseManager(METHODS_OF_PAYMENT, CATEGORIES) # Initialize the class DatabaseManager that collects the costants of the program
+# Initialize the class DatabaseManager that collects the constants of the program
+manager = DatabaseManager(METHODS_OF_PAYMENT, CATEGORIES)
 
-connection = sqlite3.connect(DATABASE)  # Create or open the database
-cursor = connection.cursor()            # Set the cursor to navigate the database
+# Create or open the database
+connection = sqlite3.connect(DATABASE)
+# Set the cursor to navigate the database
+cursor: sqlite3.Cursor = connection.cursor()
 
 #--------------------------------------------------------------------------------------------
 

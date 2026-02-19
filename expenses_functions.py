@@ -1,6 +1,6 @@
+import sqlite3
 from enum import Enum
 from datetime import datetime
-from typing import Annotated
 
 class TableName(Enum):
     MOVEMENT = 'movement'
@@ -20,8 +20,8 @@ class MovementTypes(Enum):
     DEBT = 'debito'
 
 class DatabaseManager:
-    def __init__(self, METHODS_OF_PAYMENT, CATEGORIES):
-        '''This function initializes the database.'''
+    def __init__(self, methods_of_payment, categories) -> None:
+        """This function initializes the database."""
 
         self.MOVEMENT_TAGS = {
             'date' : 'TEXT',
@@ -49,33 +49,32 @@ class DatabaseManager:
             'Amount': 'REAL',
         }
         
-        self.METHODS_OF_PAYMENT = METHODS_OF_PAYMENT
-        self.CATEGORIES = CATEGORIES
+        self.METHODS_OF_PAYMENT = methods_of_payment
+        self.CATEGORIES = categories
 
     # --- Accessor Methods ---
 
-    def getMovementTags(self) -> dict:
+    def get_movement_tags(self) -> dict:
         return self.MOVEMENT_TAGS
     
-    def getDebtCredTags(self) -> dict:
+    def get_debt_cred_tags(self) -> dict:
         return self.DEBT_CRED_TAGS
     
-    def getDebtCredRecapTags(self) -> dict: 
+    def get_debt_cred_recap_tags(self) -> dict:
         return self.DEBT_CRED_RECAP_TAGS
     
-    def getMethodsOfPayment(self) -> list:
+    def get_methods_of_payment(self) -> list:
         return self.METHODS_OF_PAYMENT
     
-    def getCategories(self) -> list: 
+    def get_categories(self) -> list:
         return self.CATEGORIES
 
 
 
 # --- Principal -----------------------------------------------------------
 
-def createTable(manager, cursor, table : TableName, index = 1) -> str:
-    '''This function initialize the database. It creates all the needed tables.'''
-
+'''This function initialize the database. It creates all the needed tables.'''
+def create_table(manager: DatabaseManager, cursor: sqlite3.Cursor, table: TableName, index: int = 1) -> str:
     # match table:
         # 'movement':
             # ;
@@ -84,7 +83,7 @@ def createTable(manager, cursor, table : TableName, index = 1) -> str:
 
     # Table movements
     if table == TableName.MOVEMENT.value:
-        movement_columns = ", ".join([f"{key} {value}" for key, value in manager.getMovementTags().items()])
+        movement_columns = ", ".join([f"{key} {value}" for key, value in manager.get_movement_tags().items()])
         cursor.execute(f'''
             create TABLE IF NOT EXISTS {TableName.MOVEMENT.value}(
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -96,7 +95,7 @@ def createTable(manager, cursor, table : TableName, index = 1) -> str:
 
     # Table debts creds
     if table == TableName.DEBT_CRED.value:
-        debt_cred_columns = ", ".join([f"{key} {value}" for key, value in manager.getDebtCredTags().items()])
+        debt_cred_columns = ", ".join([f"{key} {value}" for key, value in manager.get_debt_cred_tags().items()])
         cursor.execute(f'''
             create TABLE IF NOT EXISTS {TableName.DEBT_CRED.value}(
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -108,7 +107,7 @@ def createTable(manager, cursor, table : TableName, index = 1) -> str:
     
     # Table recap of expenses
     if table == TableName.EXPENSES_RECAP.value:
-        expenses_recap_columns = "Method_of_payment TEXT, " + ", ".join([f"{cat} REAL" for cat in manager.getCategories()])
+        expenses_recap_columns = "Method_of_payment TEXT, " + ", ".join([f"{cat} REAL" for cat in manager.get_categories()])
         cursor.execute(f'''
             create TABLE IF NOT EXISTS {TableName.EXPENSES_RECAP.value}(
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -122,7 +121,7 @@ def createTable(manager, cursor, table : TableName, index = 1) -> str:
     if table == TableName.EXPENSES_MONTH_RECAP.value:
         month_name = datetime(2020, int(index), 1).strftime('%B').lower() + "_recap"
 
-        expenses_recap_columns = "Method_of_payment TEXT, " + ", ".join([f"{cat} REAL" for cat in manager.getCategories()])
+        expenses_recap_columns = "Method_of_payment TEXT, " + ", ".join([f"{cat} REAL" for cat in manager.get_categories()])
         cursor.execute(f'''
             create TABLE IF NOT EXISTS {month_name}(
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -136,7 +135,7 @@ def createTable(manager, cursor, table : TableName, index = 1) -> str:
     
     # Table debts and creds recap
     if table == TableName.DEBT_CRED_RECAP.value:
-        debt_cred_recap_columns = ", ".join([f"{key} {value}" for key, value in manager.getDebtCredRecapTags().items()])
+        debt_cred_recap_columns = ", ".join([f"{key} {value}" for key, value in manager.get_debt_cred_recap_tags().items()])
         cursor.execute(f'''
             create TABLE IF NOT EXISTS {TableName.DEBT_CRED_RECAP.value}(
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -146,71 +145,75 @@ def createTable(manager, cursor, table : TableName, index = 1) -> str:
 
         print(f"Table {TableName.DEBT_CRED_RECAP.value} successfully created!")
 
+    return ''
+
 #   --- --- --- --- --- --- --- --- 
 
-def createTable(cursor, table : TableName):
-    '''This function deletes the table set as input.'''
+# WARN: FUNCITON NOT USED
+
+'''This function deletes the table set as input.'''
+def create_table(cursor: sqlite3.Cursor, table: TableName):
 
     cursor.execute(f"DROP TABLE IF EXISTS {table}")
     print(f'Table {table} successfully deleted!')
 
 #   --- --- --- --- --- --- --- --- 
 
-def addMovement(
-    manager,
-    cursor,
+def add_movement(
+    manager: DatabaseManager,
+    cursor: sqlite3.Cursor,
     date : str,
     category : DatabaseManager,
     description : str,
     method : DatabaseManager,
     amount : float,
-    type : MovementTypes):
-    '''This function inserts new rows to the table movements.
-    It requires the values associated to the query.'''
+    movement : MovementTypes) -> None:
+    """This function inserts new rows to the table movements.
+    It requires the values associated with the query."""
     
-    q = ", ".join(manager.getMovementTags())
-    v = ", ".join("?" for _ in manager.getMovementTags())
+    q = ", ".join(manager.get_movement_tags())
+    v = ", ".join("?" for _ in manager.get_movement_tags())
     query = f"INSERT INTO {TableName.MOVEMENT.value} ({q}) VALUES ({v})"
-    values = (date, category, description, method, amount, type)
+    values = (date, category, description, method, amount, movement)
     cursor.execute(query, values)
 
     print("Dati inseriti con successo!")
 
 #   --- --- --- --- --- --- --- --- 
 
-def addDebtCred(
-    manager,
-    cursor,
+def add_debt_cred(
+    manager: DatabaseManager,
+    cursor: sqlite3.Cursor,
     date : str,
-    category : DatabaseManager,
+    category,
     description : str,
     subject : str,
     amount : float,
     paid : float,
-    type: MovementTypes):
-    '''This function inserts new rows to the table debt_cred.'''
+    movement: MovementTypes) -> None:
+    """This function inserts new rows to the table debt_cred."""
     
-    q = ", ".join(manager.getDebtCredTags())
-    v = ", ".join("?" for _ in manager.getDebtCredTags())
+    q = ", ".join(manager.get_debt_cred_tags())
+    v = ", ".join("?" for _ in manager.get_debt_cred_tags())
     query = f"INSERT INTO {TableName.DEBT_CRED.value} ({q}) VALUES ({v})"
     due = amount - paid
-    values = (date, category, description, subject, amount, paid, due, type)
+    values = (date, category, description, subject, amount, paid, due, movement)
     cursor.execute(query, values)
 
     print("Dati inseriti con successo!")
 
 #   --- --- --- --- --- --- --- --- 
 
-def modifyDeleteRow(cursor, operation : Operations, table : TableName, row_id : int, tag = '', value = 0):
-    '''This function modifies or deletes the row's values from table movement and debt_cred.
-    It requires the operation's type, the table's name, the tag and the row's id.'''
+def modify_delete_row(cursor: sqlite3.Cursor, operation : Operations, table : TableName, row_id : int, tag = '', value = 0) -> None:
+    """This function modifies or deletes the row's values from table movement and debt_cred.
+    It requires the operation's type, the table's name, the tag, and the row's id."""
 
     if operation == Operations.MODIFY.value:
         cursor.execute(f"UPDATE {table} SET {tag} = {value} WHERE id = {row_id}")
         
         if table == TableName.DEBT_CRED.value and (tag == 'amount' or tag == 'paid'): #TODO cambiare amount 4 paid 5 due 6 
             cursor.execute(f"SELECT * FROM {table} WHERE id = {row_id}")
-            (id_row, date, category, description, subject, amount, paid, due, type) = cursor.fetchone()
+            (id_row, date, category, description, subject, amount, paid, due, movement) = cursor.fetchone()
             due =  amount - paid
             cursor.execute(f"UPDATE {table} SET {'due'} = {due} WHERE id = {row_id}")
 
@@ -219,10 +222,10 @@ def modifyDeleteRow(cursor, operation : Operations, table : TableName, row_id : 
 
 #   --- --- --- --- --- --- --- ---
 
-def readTable(cursor, table : TableName):
-    '''This function prints the input table.
+def read_table(cursor: sqlite3.Cursor, table : TableName) -> None:
+    """This function prints the input table.
     The input tables can be: movement, debt_cred, expenses_recap, 'Month_name'_recap, or month_recap.
-    In the last case the function prints all the 'Month_name'_recap tables.'''
+    In the last case the function prints all the 'Month_name'_recap tables."""
 
     if table == TableName.EXPENSES_MONTH_RECAP.value:
         for i in range(1, 13):
@@ -244,100 +247,104 @@ def readTable(cursor, table : TableName):
 
 #   --- --- --- --- --- --- --- --- 
 
-def expensesRecap(manager, cursor, filter = 0):
-    '''This function fills the table recap based on the tables movement
-    The filter can be set to 'month_recap': in this case it fills all the recap tables filtered by month.
-    The filter can be set equal to a specific month (es: filter = 1 -> January): in this case it fills the chosen monhtly recap tables.'''
+def expenses_recap(manager: DatabaseManager, cursor: sqlite3.Cursor, month = 0) -> None:
+    """
+    This function fills the table recap based on the table movement
+    The month can be set to 'month_recap': in this case it fills all the recap tables filtered by the month.
+    The month can be set equal to a specific month (es: filter = 1 -> January): in this case it fills the chosen monthly recap tables.
+    """
 
     cursor.execute(f"SELECT * FROM {TableName.MOVEMENT.value}")
     rows = cursor.fetchall()
 
     recap_amount = [[[
-                0 for _ in manager.getCategories()
-            ] for _ in manager.getMethodsOfPayment()
+                0 for _ in manager.get_categories()
+            ] for _ in manager.get_methods_of_payment()
         ] for _ in range(12)
     ]
     
-    q = "Method_of_payment, " + ", ".join(manager.getCategories())
-    v = "?, " + ", ".join("?" for _ in manager.getCategories())
+    q = "Method_of_payment, " + ", ".join(manager.get_categories())
+    v = "?, " + ", ".join("?" for _ in manager.get_categories())
 
     for row in rows:
-        id_mov, date, category, description, method, amount, type = row
+        id_mov, date, category, description, method, amount, movement = row
 
-        id_met = manager.getMethodsOfPayment().index(method)
-        id_cat =  manager.getCategories().index(category)
+        id_met = manager.get_methods_of_payment().index(method)
+        id_cat =  manager.get_categories().index(category)
 
         # Changing the amount's sign if it's an exit
-        if type == MovementTypes.EXIT.value:
+        if movement == MovementTypes.EXIT.value:
             amount = - amount
 
         # Saving the amounts in an array for the table expenses_recap
-        if filter:
-            id_mon = datetime.strptime(date, '%Y-%m-%d').month      # If filter month_recap is applied then we use all the needed matrices for the recap
+        if month:
+            # If filter month_recap is applied, then we use all the necessary matrices for the recap
+            id_mon = datetime.strptime(date, '%Y-%m-%d').month
             recap_amount[id_mon-1][id_met][id_cat] += amount
             
-        else:                                                       # If no filter is applied then we use only the first matrices    
+        else:
+            # If no filter is applied, then we use only the first matrices
             recap_amount[0][id_met][id_cat] += amount
 
-    if not filter:
-        createTable(cursor, TableName.EXPENSES_RECAP.value)
-        createTable(manager, cursor, TableName.EXPENSES_RECAP.value)
+    if not month:
+        create_table(cursor, TableName.EXPENSES_RECAP)
+        create_table(manager, cursor, TableName.EXPENSES_RECAP)
 
-        for i in range(len(manager.getMethodsOfPayment())):
+        for i in range(len(manager.get_methods_of_payment())):
             query = f"INSERT INTO {TableName.EXPENSES_RECAP.value} ({q}) VALUES ({v})"
-            values = manager.getMethodsOfPayment()[i], *recap_amount[0][i][:]
+            values = manager.get_methods_of_payment()[i], *recap_amount[0][i][:]
 
             cursor.execute(query, values)
 
     
-    if filter == TableName.EXPENSES_MONTH_RECAP.value:
+    if month == TableName.EXPENSES_MONTH_RECAP.value:
         table = []
 
         for k in range(1, 13):
-            table.insert(k-1, createTable(manager, cursor, TableName.EXPENSES_MONTH_RECAP.value, k))
+            table.insert(k-1, create_table(manager, cursor, TableName.EXPENSES_MONTH_RECAP, k))
             cursor.execute(f"DELETE FROM {table[k-1]}")
             cursor.execute(f"DELETE FROM sqlite_sequence WHERE name = '{table[k-1]}'")
 
-            for i in range(len(manager.getMethodsOfPayment())):
+            for i in range(len(manager.get_methods_of_payment())):
                 query = f"INSERT INTO {table[k-1]} ({q}) VALUES ({v})"
-                values = manager.getMethodsOfPayment()[i], *recap_amount[k-1][i][:]
+                values = manager.get_methods_of_payment()[i], *recap_amount[k-1][i][:]
 
                 cursor.execute(query, values)
 
-    if filter != 0 and filter != TableName.EXPENSES_MONTH_RECAP.value:
-        table = createTable(manager, cursor, TableName.EXPENSES_MONTH_RECAP.value, filter)
+    if month != 0 and month != TableName.EXPENSES_MONTH_RECAP.value:
+        table = create_table(manager, cursor, TableName.EXPENSES_MONTH_RECAP, month)
         cursor.execute(f"DELETE FROM {table}")
         cursor.execute(f"DELETE FROM sqlite_sequence WHERE name='{table}'")
 
-        for i in range(len(manager.getMethodsOfPayment())):
+        for i in range(len(manager.get_methods_of_payment())):
                 query = f"INSERT INTO {table} ({q}) VALUES ({v})"
-                values = manager.getMethodsOfPayment()[i], *recap_amount[filter-1][i][:]
+                values = manager.get_methods_of_payment()[i], *recap_amount[month - 1][i][:]
 
                 cursor.execute(query, values)
 
 #   --- --- --- --- --- --- --- --- 
 
-def debtCredRecap(manager, cursor):
-    '''This function creates the table debt_crted_recap.
+def debt_cred_recap(manager: DatabaseManager, cursor: sqlite3.Cursor) -> None:
+    """This function creates the table debt_carted_recap.
     Table 1st column: Subject name.
     Table 2nd column: Status.
-    Table 3rd column: Amount.'''
+    Table 3rd column: Amount."""
 
     subject_names = []
     recap_amount = []
-    q = ", ".join(manager.getDebtCredRecapTags())
-    v = ", ".join("?" for _ in manager.getDebtCredRecapTags())
+    q = ", ".join(manager.get_debt_cred_recap_tags())
+    v = ", ".join("?" for _ in manager.get_debt_cred_recap_tags())
     print()
-    createTable(cursor, TableName.DEBT_CRED_RECAP.value)
-    createTable(manager, cursor, TableName.DEBT_CRED_RECAP.value)
+    create_table(cursor, TableName.DEBT_CRED_RECAP)
+    create_table(manager, cursor, TableName.DEBT_CRED_RECAP)
 
     cursor.execute(f"SELECT * FROM {TableName.DEBT_CRED.value}")
     rows = cursor.fetchall()
 
     for row in rows:
-        id_dc, date, category, description, subject, amount, paid, due, type = row
+        id_dc, date, category, description, subject, amount, paid, due, movement = row
 
-        if type == MovementTypes.DEBT.value:
+        if movement == MovementTypes.DEBT.value:
             due = - due
 
         if subject not in subject_names:
@@ -348,6 +355,8 @@ def debtCredRecap(manager, cursor):
 
     for subject in subject_names:
         amount = recap_amount[subject_names.index(subject)]
+        prompt = ''
+
         if amount < 0:
             prompt = 'sono in debito di:'
 
