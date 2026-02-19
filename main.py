@@ -5,7 +5,7 @@ from expenses_functions import DatabaseManager
 
 # --- Initialization of the constants of the program ---
 
-DATABASE = file_saver.saveDatabase()   # Create or open the database
+DATABASE = file_saver.saveDatabase()   # Set the Database name and path
 # DATABASE = 'spese_2026.db'
 
 
@@ -34,8 +34,8 @@ CATEGORIES = [                  # This list may be modified
 
 manager = DatabaseManager(METHODS_OF_PAYMENT, CATEGORIES) # Initialize the class DatabaseManager that collects the costants of the program
 
-connection = sqlite3.connect(DATABASE)
-cursor = connection.cursor()
+connection = sqlite3.connect(DATABASE)  # Create or open the database
+cursor = connection.cursor()            # Set the cursor to navigate the database
 
 #--------------------------------------------------------------------------------------------
 
