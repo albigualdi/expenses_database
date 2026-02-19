@@ -36,6 +36,6 @@ def save_database(folder_name: str = None, base_name: str = None) -> Path:
     return file_path
 
 # --- Per vedere come funziona ---
-# print(saveDatabase())
-# DatabaseConfig.setDefaults(folder='Progetti/Database', name='backup_globale')
-# print(saveDatabase())
+# print(save_database())
+# DatabaseConfig.set_defaults(folder='Progetti/Database', name='backup_globale')
+# print(save_database())
