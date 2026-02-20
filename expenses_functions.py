@@ -93,6 +93,8 @@ def create_table(manager : DatabaseManager, cursor : sqlite3.Cursor, table : Tab
         case TableName.MOVEMENT:
             # Table movements
             movement_columns = ", ".join([f"{key} {value}" for key, value in manager.get_movement_tags().items()])
+
+            # INFO: sqlite3 requires the table name to be a string, so we are using the .value attribute of the Enum!
             cursor.execute(f'''
                 create TABLE IF NOT EXISTS {TableName.MOVEMENT.value}(
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -126,7 +128,8 @@ def create_table(manager : DatabaseManager, cursor : sqlite3.Cursor, table : Tab
         case TableName.EXPENSES_MONTH_RECAP:
             # Table monthly recap of expenses
             month_name = datetime(2020, int(month_ind), 1).strftime('%B').lower() + "_recap"
-            #TODO: bisogna che in base al numero del mese usi uno dei valori della TableNames legati ai mesi
+
+            # TODO: bisogna che in base al numero del mese usi uno dei valori della TableNames legati ai mesi
             expenses_recap_columns = "Method_of_payment TEXT, " + ", ".join([f"{cat} REAL" for cat in manager.get_categories()])
             cursor.execute(f'''
                 create TABLE IF NOT EXISTS {month_name}(
@@ -153,7 +156,7 @@ def create_table(manager : DatabaseManager, cursor : sqlite3.Cursor, table : Tab
 
 #   --- --- --- --- --- --- --- ---
 def delete_table(cursor : sqlite3.Cursor, table : TableName) -> None:
-    '''This function deletes the table set as input.'''
+    """This function deletes the table set as input."""
 
     cursor.execute(f"DROP TABLE IF EXISTS {table.value}")
     print(f'Table {table.value} successfully deleted!')
@@ -276,7 +279,7 @@ def expenses_recap(manager : DatabaseManager, cursor : sqlite3.Cursor, month_ind
         id_cat =  manager.get_categories().index(category)
 
         # Changing the amount's sign if it's an exit
-        if movement == MovementTypes.EXIT.value: #TODO capire perché nelle tablle con add va il valore e non il testo
+        if movement == MovementTypes.EXIT.value: #TODO capire perché nelle table con add va il valore e non il testo
             amount = - amount
 
         # Saving the amounts in an array for the table expenses_recap
@@ -347,8 +350,10 @@ def debt_cred_recap(manager : DatabaseManager, cursor : sqlite3.Cursor) -> None:
 
     for row in rows:
         id_dc, date, category, description, subject, amount, paid, due, movement = row
-        
-        if movement == MovementTypes.DEBT.value: #TODO capire perché nelle tablle con add va il valore e non il testo
+
+        # TODO: capire perché nelle table con add va il valore e non il testo
+        # FIX: Vengono create delle tabelle con nome stringa, e non come enum, va cambiato create_table. SEE line 97
+        if movement == MovementTypes.DEBT.value:
             due = - due
 
         if subject not in subject_names:

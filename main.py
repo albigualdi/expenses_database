@@ -1,6 +1,5 @@
 import sqlite3
 import database_saver
-import expenses_functions
 from expenses_functions import DatabaseManager, TableName, MovementTypes, Operations
 
 # --- Initialization of the program's constants ---
@@ -9,6 +8,7 @@ from expenses_functions import DatabaseManager, TableName, MovementTypes, Operat
 DATABASE = database_saver.save_database('', 'spese.db')
 
 
+# TODO: USE ENUM
 # This list may be modified
 METHODS_OF_PAYMENT = [
     'Contanti',
@@ -19,6 +19,7 @@ METHODS_OF_PAYMENT = [
     'PayPal'
 ]
 
+# TODO: USE ENUM
 # This list may be modified
 CATEGORIES = [
     'Cibo',
@@ -81,18 +82,18 @@ cursor: sqlite3.Cursor = connection.cursor()
 # expenses_functions.delete_table(cursor, TableName.DEBT_CRED)
 # expenses_functions.delete_table(cursor, TableName.EXPENSES_RECAP)
 # expenses_functions.delete_table(cursor, TableName.DEBT_CRED_RECAP)
-# expenses_functions.delete_table(cursor, 'january_recap')
-# expenses_functions.delete_table(cursor, 'february_recap')
-# expenses_functions.delete_table(cursor, 'march_recap')
-# expenses_functions.delete_table(cursor, 'april_recap')
-# expenses_functions.delete_table(cursor, 'may_recap')
-# expenses_functions.delete_table(cursor, 'june_recap')
-# expenses_functions.delete_table(cursor, 'july_recap')
-# expenses_functions.delete_table(cursor, 'august_recap')
-# expenses_functions.delete_table(cursor, 'september_recap')
-# expenses_functions.delete_table(cursor, 'october_recap')
-# expenses_functions.delete_table(cursor, 'november_recap')
-# expenses_functions.delete_table(cursor, 'december_recap')
+# expenses_functions.delete_table(cursor, TableName.JANUARY_RECAP)
+# expenses_functions.delete_table(cursor, TableName.FEBRUARY_RECAP)
+# expenses_functions.delete_table(cursor, TableName.MARCH_RECAP)
+# expenses_functions.delete_table(cursor, TableName.APRIL_RECAP)
+# expenses_functions.delete_table(cursor, TableName.MAY_RECAP)
+# expenses_functions.delete_table(cursor, TableName.JUNE_RECAP)
+# expenses_functions.delete_table(cursor, TableName.JULY_RECAP)
+# expenses_functions.delete_table(cursor, TableName.AUGUST_RECAP)
+# expenses_functions.delete_table(cursor, TableName.SEPTEMBER_RECAP)
+# expenses_functions.delete_table(cursor, TableName.OCTOBER_RECAP)
+# expenses_functions.delete_table(cursor, TableName.NOVEMBER_RECAP)
+# expenses_functions.delete_table(cursor, TableName.DECEMBER_RECAP)
 
 #--------------------------------------------------------------------------------------------
 
