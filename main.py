@@ -1,15 +1,17 @@
 import sqlite3
 import database_saver
 import expenses_functions
-from expenses_functions import DatabaseManager
+from expenses_functions import DatabaseManager, TableName, MovementTypes, Operations
 
-# --- Initialization of the constants of the program ---
+# --- Initialization of the program's constants ---
 
-DATABASE = database_saver.save_database()   # Set the Database name and path
+# Set the Database name and path
+DATABASE = database_saver.save_database()
 # DATABASE = 'spese_2026.db'
 
 
-METHODS_OF_PAYMENT = [          # This list may be modified
+# This list may be modified
+METHODS_OF_PAYMENT = [
     'Contanti',
     'Bonifico',
     'Bancomat',
@@ -18,7 +20,8 @@ METHODS_OF_PAYMENT = [          # This list may be modified
     'PayPal'
 ]
 
-CATEGORIES = [                  # This list may be modified
+# This list may be modified
+CATEGORIES = [
     'Cibo',
     'Svago',
     'Spesa',
@@ -32,36 +35,40 @@ CATEGORIES = [                  # This list may be modified
     'Generico'
 ]
 
-manager = DatabaseManager(METHODS_OF_PAYMENT, CATEGORIES) # Initialize the class DatabaseManager that collects the costants of the program
+# Initialize the class DatabaseManager that collects the constants of the program
+manager = DatabaseManager(METHODS_OF_PAYMENT, CATEGORIES)
 
-connection = sqlite3.connect(DATABASE)  # Create or open the database
-cursor = connection.cursor()            # Set the cursor to navigate the database
+# Create or open the database
+connection = sqlite3.connect(DATABASE)
+# Set the cursor to navigate the database
+cursor: sqlite3.Cursor = connection.cursor()
 
 #--------------------------------------------------------------------------------------------
 
 # --- Create tables ---
-# expenses_functions.create_table(manager, cursor, 'movement')
-# expenses_functions.create_table(manager, cursor, 'debt_cred')
-# expenses_functions.expenses_recap(manager, cursor, 'month_recap')
-# expenses_functions.debt_cred_recap(manager, cursor)
+expenses_functions.create_table(manager, cursor, TableName.MOVEMENT)
+expenses_functions.create_table(manager, cursor, TableName.DEBT_CRED)
+
+expenses_functions.expenses_recap(manager, cursor, TableName.EXPENSES_MONTH_RECAP)
+expenses_functions.debt_cred_recap(manager, cursor)
 
 # -- Add row ---
-# expenses_functions.add_movement(manager, cursor, '2026-07-15', 'Cena', 'San Valentino', 'Contanti', 10, 'uscita')
-# expenses_functions.add_debt_cred(manager, cursor, '2026-01-01', 'Regali', 'Pranzo', 'Mamma', 10, 0, 'debito')
-# expenses_functions.add_debt_cred(manager, cursor, '2026-02-01', 'Regali', 'Pranzo', 'Lori', 10, 5, 'credito')
-# expenses_functions.add_debt_cred(manager, cursor, '2026-03-01', 'Regali', 'Pranzo', 'Lori', 10, 0, 'debito')
-# expenses_functions.add_debt_cred(manager, cursor, '2026-03-01', 'Regali', 'Pranzo', 'Brigg', 10, 0, 'credito')
+expenses_functions.add_movement(manager, cursor, '2026-07-15', 'Cena', 'San Valentino', 'Contanti', 10, MovementTypes.EXIT)
+expenses_functions.add_debt_cred(manager, cursor, '2026-01-01', 'Regali', 'Pranzo', 'Mamma', 10, 0, MovementTypes.DEBT)
+expenses_functions.add_debt_cred(manager, cursor, '2026-02-01', 'Regali', 'Pranzo', 'Lori', 10, 5, MovementTypes.CRED)
+expenses_functions.add_debt_cred(manager, cursor, '2026-03-01', 'Regali', 'Pranzo', 'Lori', 10, 0, MovementTypes.DEBT)
+expenses_functions.add_debt_cred(manager, cursor, '2026-03-01', 'Regali', 'Pranzo', 'Brigg', 10, 0, MovementTypes.CRED)
 
 # --- Modify tables ---
-# expenses_functions.modify_delete_row(cursor, 'modify', 'debt_cred', 1, 'amount', 100)
-# expenses_functions.modify_delete_row(cursor, 'modify', 'debt_cred', 1, tag='paid', value=30)
-# expenses_functions.modify_delete_row(cursor, 'delete', 'debt_cred', 9)
+expenses_functions.modify_delete_row(cursor, Operations.MODIFY, TableName.DEBT_CRED, 1, 'amount', 100)
+expenses_functions.modify_delete_row(cursor, Operations.MODIFY, TableName.DEBT_CRED, 1, 'paid', 30)
+expenses_functions.modify_delete_row(cursor, Operations.DELETE, TableName.DEBT_CRED, 9)
 
 # --- Read Tables ---
-# expenses_functions.read_table(cursor, 'debt_cred')
-# expenses_functions.read_table(cursor, 'movement')
-# expenses_functions.read_table(cursor, 'month_recap')
-# expenses_functions.read_table(cursor, 'debt_cred_recap')
+expenses_functions.read_table(cursor, TableName.DEBT_CRED)
+expenses_functions.read_table(cursor, TableName.MOVEMENT)
+expenses_functions.read_table(cursor, TableName.EXPENSES_MONTH_RECAP)
+expenses_functions.read_table(cursor, TableName.DEBT_CRED_RECAP)
 
 # --- Delete Tables ---
 # expenses_functions.delete_table(cursor, 'movement')

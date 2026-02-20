@@ -6,17 +6,19 @@ class DatabaseConfig:
     default_name = 'untitled'
 
     @classmethod
-    def set_defaults(cls, folder: str = None, name: str = None):
+    def set_defaults(cls, folder_name: str = None, file_name: str = None) -> None:
         """Method to update the default values"""
-        if folder:
-            cls.default_dir = folder
-        if name:
-            cls.default_name = name
+        if folder_name:
+            cls.default_dir = folder_name
+        if file_name:
+            cls.default_name = file_name
 
 
-def save_database(folder_name : str = None, base_name : str = None) -> str:
-    '''saveDatabase creates the directory (if doesn't exist)
-    and returns a unique file path to avoid overwriting'''
+def save_database(folder_name: str = None, base_name: str = None) -> Path:
+    """
+    creates the directory if it doesn't already exist
+    and returns a unique file path to avoid overwriting
+    """
 
     folder = folder_name or DatabaseConfig.default_dir
     name = base_name or DatabaseConfig.default_name
@@ -26,7 +28,7 @@ def save_database(folder_name : str = None, base_name : str = None) -> str:
 
 
     clean_name = Path(name).stem
-    file_path = Path.joinpath(target_dir, f"{clean_name}.db")
+    file_path: Path = Path.joinpath(target_dir, f"{clean_name}.db")
 
     counter = 1
     while file_path.exists():
