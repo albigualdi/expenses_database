@@ -73,7 +73,7 @@ cursor: sqlite3.Cursor = connection.cursor()
 # expenses_functions.read_table(cursor, TableName.DEBT_CRED)
 # expenses_functions.read_table(cursor, TableName.EXPENSES_RECAP)
 # expenses_functions.read_table(cursor, TableName.EXPENSES_MONTH_RECAP)
-# expenses_functions.read_table(cursor, TableName.JANUARY_RECAP)
+# expenses_functions.read_table(cursor, TableName.EXPENSES_MONTH_RECAP, month_ind = 1)
 # expenses_functions.read_table(cursor, TableName.DEBT_CRED_RECAP)
 
 # --- Delete Tables ---

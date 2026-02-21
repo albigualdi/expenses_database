@@ -9,19 +9,20 @@ class TableName(Enum):
     EXPENSES_RECAP = 'expenses_recap'
     EXPENSES_MONTH_RECAP = 'month_recap'
     DEBT_CRED_RECAP = 'debt_cred_recap'
-    JANUARY_RECAP = 'january_recap'
-    FEBRUARY_RECAP = 'february_recap'
-    MARCH_RECAP = 'march_recap'
-    APRIL_RECAP = 'april_recap'
-    MAY_RECAP = 'may_recap'
-    JUNE_RECAP = 'june_recap'
-    JULY_RECAP = 'july_recap'
-    AUGUST_RECAP = 'august_recap'
-    SEPTEMBER_RECAP = 'september_recap'
-    OCTOBER_RECAP = 'october_recap'
-    NOVEMBER_RECAP = 'november_recap'
-    DECEMBER_RECAP = 'december_recap'
-
+    MONTHS = (
+        'january_recap',
+        'february_recap',
+        'march_recap',
+        'april_recap',
+        'may_recap',
+        'june_recap',
+        'july_recap',
+        'august_recap',
+        'september_recap',
+        'october_recap',
+        'november_recap',
+        'december_recap'
+    )
 
 class Operations(Enum):
     MODIFY = 'modify'
@@ -125,8 +126,7 @@ def create_table(manager : DatabaseManager, cursor : sqlite3.Cursor, table : Tab
             print(f"Table {TableName.EXPENSES_RECAP.value} successfully created!")
         case TableName.EXPENSES_MONTH_RECAP:
             # Table monthly recap of expenses
-            month_name = datetime(2020, int(month_ind), 1).strftime('%B').lower() + "_recap"
-            #TODO: bisogna che in base al numero del mese usi uno dei valori della TableNames legati ai mesi
+            month_name = TableName.MONTHS.value[month_ind-1]
             expenses_recap_columns = "Method_of_payment TEXT, " + ", ".join([f"{cat} REAL" for cat in manager.get_categories()])
             cursor.execute(f'''
                 create TABLE IF NOT EXISTS {month_name}(
@@ -223,7 +223,7 @@ def modify_delete_row(cursor : sqlite3.Cursor, operation : Operations, table : T
 
 #   --- --- --- --- --- --- --- ---
 
-def read_table(cursor : sqlite3.Cursor, table : TableName) -> None:
+def read_table(cursor : sqlite3.Cursor, table : TableName, month_ind : int = 0) -> None:
     """
     This function prints the input table.
     The input tables can be: movement, debt_cred, expenses_recap, 'Month_name'_recap, or month_recap.
@@ -231,8 +231,10 @@ def read_table(cursor : sqlite3.Cursor, table : TableName) -> None:
     """
 
     if table == TableName.EXPENSES_MONTH_RECAP:
-        for i in range(1, 13):
-            month_name = datetime(2020, int(i), 1).strftime('%B').lower() + "_recap"
+        months = TableName.MONTHS.value
+        if month_ind:
+            months = [TableName.MONTHS.value[month_ind-1]]
+        for month_name in months:
             cursor.execute(f"SELECT * FROM {month_name}")
             rows = cursor.fetchall()
             print(f"Table {month_name}")
@@ -254,7 +256,7 @@ def expenses_recap(manager : DatabaseManager, cursor : sqlite3.Cursor, month_ind
     """
     This function fills the table recap based on the table movement
     The month can be set to 'month_recap': in this case it fills all the recap tables filtered by the month.
-    The month can be set equal to a specific month (es: filter = 1 -> January): in this case it fills the chosen monthly recap tables.
+    The month can be set equal to a specific month (es: filter = 1 -> January): in this case it fills the chosen monthly recap table.
     """
 
     cursor.execute(f"SELECT * FROM {TableName.MOVEMENT.value}")
@@ -276,7 +278,7 @@ def expenses_recap(manager : DatabaseManager, cursor : sqlite3.Cursor, month_ind
         id_cat =  manager.get_categories().index(category)
 
         # Changing the amount's sign if it's an exit
-        if movement == MovementTypes.EXIT.value: #TODO capire perché nelle tablle con add va il valore e non il testo
+        if movement == MovementTypes.EXIT.value:
             amount = - amount
 
         # Saving the amounts in an array for the table expenses_recap
@@ -348,7 +350,7 @@ def debt_cred_recap(manager : DatabaseManager, cursor : sqlite3.Cursor) -> None:
     for row in rows:
         id_dc, date, category, description, subject, amount, paid, due, movement = row
         
-        if movement == MovementTypes.DEBT.value: #TODO capire perché nelle tablle con add va il valore e non il testo
+        if movement == MovementTypes.DEBT.value:
             due = - due
 
         if subject not in subject_names:
